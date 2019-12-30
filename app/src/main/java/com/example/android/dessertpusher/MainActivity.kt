@@ -26,9 +26,9 @@ import androidx.core.app.ShareCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.LifecycleObserver
 import com.example.android.dessertpusher.databinding.ActivityMainBinding
+import timber.log.Timber
 
 class MainActivity : AppCompatActivity(), LifecycleObserver {
-
     private var revenue = 0
     private var dessertsSold = 0
 
@@ -64,6 +64,7 @@ class MainActivity : AppCompatActivity(), LifecycleObserver {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Timber.i("onCreate")
 
         // Use Data Binding to get reference to the views
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
@@ -94,6 +95,26 @@ class MainActivity : AppCompatActivity(), LifecycleObserver {
 
         // Show the next dessert
         showCurrentDessert()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Timber.i("onPause")
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Timber.i("onResume")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Timber.i("onDestroy")
+    }
+
+    override fun onStop() {
+        super.onStop()
+        Timber.i("onStop")
     }
 
     /**
@@ -133,6 +154,11 @@ class MainActivity : AppCompatActivity(), LifecycleObserver {
             Toast.makeText(this, getString(R.string.sharing_not_available),
                     Toast.LENGTH_LONG).show()
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        Timber.i("onStart")
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
