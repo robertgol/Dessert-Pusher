@@ -1,3 +1,3 @@
 # Dessert-Pusher 
 
-Forth app from the **Developing Android Apps with Kotlin** Udacity course.
+Fifth app from the **Developing Android Apps with Kotlin** Udacity course.
