@@ -16,6 +16,7 @@
 
 package com.example.android.dessertpusher
 
+import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.os.Bundle
 import android.view.Menu
@@ -24,6 +25,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ShareCompat
 import androidx.databinding.DataBindingUtil
+import androidx.databinding.ViewDataBinding
 import androidx.lifecycle.LifecycleObserver
 import com.example.android.dessertpusher.databinding.ActivityMainBinding
 import timber.log.Timber
@@ -32,11 +34,12 @@ class MainActivity : AppCompatActivity(), LifecycleObserver {
     private var revenue = 0
     private var dessertsSold = 0
 
+    private lateinit var dessertTimer: DessertTimer
+
     // Contains all the views
     private lateinit var binding: ActivityMainBinding
 
     /** Dessert Data **/
-
     /**
      * Simple data class that represents a dessert. Includes the resource id integer associated with
      * the image, the price it's sold for, and the startProductionAmount, which determines when
@@ -60,18 +63,19 @@ class MainActivity : AppCompatActivity(), LifecycleObserver {
             Dessert(R.drawable.nougat, 5000, 16000),
             Dessert(R.drawable.oreo, 6000, 20000)
     )
+
     private var currentDessert = allDesserts[0]
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Timber.i("onCreate")
 
-        // Use Data Binding to get reference to the views
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+        dessertTimer = DessertTimer()
 
-        binding.dessertButton.setOnClickListener {
-            onDessertClicked()
-        }
+        // Use Data Binding to get reference to the views
+        binding = createBinding(R.layout.activity_main)
+
+        binding.dessertButton.setOnClickListener { onDessertClicked() }
 
         // Set the TextViews to the right values
         binding.revenue = revenue
@@ -79,6 +83,41 @@ class MainActivity : AppCompatActivity(), LifecycleObserver {
 
         // Make sure the correct dessert is showing
         binding.dessertButton.setImageResource(currentDessert.imageId)
+    }
+
+    private fun <T : ViewDataBinding> Activity.createBinding(layoutId: Int) =
+            DataBindingUtil.setContentView<T>(this, layoutId)
+
+    override fun onStart() {
+        super.onStart()
+        Timber.i("onStart")
+        dessertTimer.startTimer()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Timber.i("onResume")
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Timber.i("onPause")
+    }
+
+    override fun onStop() {
+        super.onStop()
+        Timber.i("onStop")
+        dessertTimer.stopTimer()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Timber.i("onDestroy")
+    }
+
+    override fun onRestart() {
+        super.onRestart()
+        Timber.i("onRestart")
     }
 
     /**
@@ -95,26 +134,6 @@ class MainActivity : AppCompatActivity(), LifecycleObserver {
 
         // Show the next dessert
         showCurrentDessert()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        Timber.i("onPause")
-    }
-
-    override fun onResume() {
-        super.onResume()
-        Timber.i("onResume")
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        Timber.i("onDestroy")
-    }
-
-    override fun onStop() {
-        super.onStop()
-        Timber.i("onStop")
     }
 
     /**
@@ -154,11 +173,6 @@ class MainActivity : AppCompatActivity(), LifecycleObserver {
             Toast.makeText(this, getString(R.string.sharing_not_available),
                     Toast.LENGTH_LONG).show()
         }
-    }
-
-    override fun onStart() {
-        super.onStart()
-        Timber.i("onStart")
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
